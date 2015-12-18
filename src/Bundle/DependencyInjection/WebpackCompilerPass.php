@@ -63,10 +63,13 @@ class WebpackCompilerPass implements CompilerPassInterface
             throw new \RuntimeException(sprintf('Webpack is not installed in path "%s".', $config['node']['node_modules_path']));
         }
 
+        $cmd = $config['node']['binary'] . ' ' . $webpack . ' --config ' . $container->getParameter('kernel.cache_dir') . '/webpack.config.js';
+        $cwd = $container->getParameter('kernel.root_dir') . '/../';
+
         $process_definition = $container
             ->getDefinition('hostnet_webpack.bridge.compiler_process')
-            ->replaceArgument(0, $config['node']['binary'] . ' ' . $webpack)
-            ->replaceArgument(1, $container->getParameter('kernel.cache_dir'));
+            ->replaceArgument(0, $cmd)
+            ->replaceArgument(1, $cwd);
 
         $builder_definition   = $container->getDefinition('hostnet_webpack.bridge.config_generator');
         $config_extension_ids = array_keys($container->findTaggedServiceIds('hostnet_webpack.config_extension'));
